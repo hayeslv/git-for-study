@@ -1,5 +1,5 @@
 #!/bin/bash
-WEB_PATH='/root/for-study-test/webhooks/deploy_server/pm2-test'
+WEB_PATH='/root/for-study-test/git-for-study/deploy_server/pm2-test'
 
 
 echo "开始执行shell"
@@ -9,5 +9,5 @@ git pull
 echo "changing permissions..."
 #chown -R $WEB_USER:$WEB_USERGROUP $WEB_PATH
 echo " git pull 完成. 开始 build"
-yarn run gatsby build
+yarn run build
 echo "build 完成"
