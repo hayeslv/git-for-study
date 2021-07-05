@@ -6,7 +6,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">6666home</router-link> |
+      <router-link to="/">6666HHHH</router-link> |
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>
