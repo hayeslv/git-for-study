@@ -5,13 +5,13 @@ WEB_PATH='/root/for-study-test/git-for-study/deploy_server/pm2-test/server'
 echo "开始执行shell"
 cd $WEB_PATH
 echo "pulling source code..."
-git pull
+git pull &&
 echo "changing permissions..."
 #chown -R $WEB_USER:$WEB_USERGROUP $WEB_PATH
 echo " git pull 完成. 开始 build"
-npm run build
+npm run build &&
 echo "build 完成"
 echo "开始重启docker-compose"
-docker-compose down
+docker-compose down &&
 docker-compose up -d
 echo "docker-compose 重启完毕"
