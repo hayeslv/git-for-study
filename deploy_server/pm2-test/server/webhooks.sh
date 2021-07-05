@@ -9,5 +9,5 @@ git pull
 echo "changing permissions..."
 #chown -R $WEB_USER:$WEB_USERGROUP $WEB_PATH
 echo " git pull 完成. 开始 build"
-yarn run build
+npm run build
 echo "build 完成"
