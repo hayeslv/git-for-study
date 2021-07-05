@@ -11,3 +11,7 @@ echo "changing permissions..."
 echo " git pull 完成. 开始 build"
 npm run build
 echo "build 完成"
+echo "开始重启docker-compose"
+docker-compose down
+docker-compose up -d
+echo "docker-compose 重启完毕"
