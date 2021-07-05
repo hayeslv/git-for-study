@@ -1,0 +1,11 @@
+version: '3.1'
+services:
+  nginx:
+    restart: always
+    image: nginx
+    ports:
+      - 81:81
+    volumes:
+      - ./conf.d/:/etc/nginx/conf.d
+      - /root/for-study-test/git-for-study/deploy_server/pm2-test/dist:/usr/share/nginx/test/
+    
