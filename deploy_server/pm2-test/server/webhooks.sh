@@ -1,5 +1,5 @@
 #!/bin/bash
-WEB_PATH='/root/for-study-test/git-for-study/deploy_server/pm2-test'
+WEB_PATH='/root/for-study-test/git-for-study/deploy_server/pm2-test/server'
 
 
 echo "开始执行shell"
