@@ -1,7 +1,12 @@
+<!--
+ * @Author: Lvhz
+ * @Date: 2021-07-02 10:23:44
+ * @Description: Description
+-->
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
+      <router-link to="/">Home111</router-link> |
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>
