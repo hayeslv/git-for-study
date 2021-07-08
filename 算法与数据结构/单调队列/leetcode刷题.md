@@ -160,13 +160,254 @@ var longestSubarray = function(nums, limit) {
 
 
 
+#### 5、leetcode513-找树左下角的值
+
+给定一个二叉树，在树的最后一行找到最左边的值。
+
+```js
+var findBottomLeftValue = function(root) {
+    let max_k = -1, val = 0;
+    dfs(root, 0);
+    function dfs(root, k) {
+        if(!root) return;
+        if(k > max_k) {
+            // 第一次到达这个深度
+            max_k = k;
+            val = root.val;
+        }
+        dfs(root.left, k+1);
+        dfs(root.right, k+1);
+        return;
+    }
+    return val;
+};
+```
+
+
+
+#### 6、leetcode135-分发糖果
+
+老师想给孩子们分发糖果，有 N 个孩子站成了一条直线，老师会根据每个孩子的表现，预先给他们评分。
+
+你需要按照以下要求，帮助老师给这些孩子分发糖果：
+
+- 每个孩子至少分配到 1 个糖果。
+- 评分更高的孩子必须比他两侧的邻位孩子获得更多的糖果。
+
+那么这样下来，老师至少需要准备多少颗糖果呢？
+
+```js
+var candy = function(ratings) {
+    let l = new Array(ratings.length);
+    let r = new Array(ratings.length);
+    // 从左到右
+    for(let i=0, j=1; i<l.length; i++) {
+        if(i && ratings[i] > ratings[i-1]) {
+            j += 1;
+        } else {
+            j = 1;
+        }
+        l[i] = j;
+    }
+    // 从右到左
+    for(let i=r.length - 1, j=1; i>=0; i--) {
+        if(i < r.length - 1 && ratings[i] > ratings[i+1]) {
+            j += 1;
+        } else {
+            j = 1;
+        }
+        r[i] = j;
+    }
+    let ans = 0;
+    for(let i=0; i<l.length; i++) ans += Math.max(l[i], r[i]);
+    console.log(l, r)
+    return ans;
+};
+```
+
+
+
+#### 7、leetcode365-水壶问题
+
+有两个容量分别为 x升 和 y升 的水壶以及无限多的水。请判断能否通过使用这两个水壶，从而可以得到恰好 z升 的水？
+
+如果可以，最后请用以上水壶中的一或两个来盛放取得的 z升 水。
+
+你允许：
+
+- 装满任意一个水壶
+- 清空任意一个水壶
+- 从一个水壶向另外一个水壶倒水，直到装满或者倒空
 
 
 
 
 
+#### 8、leetcode1760-袋子里最少数目的球
+
+给你一个整数数组 nums ，其中 nums[i] 表示第 i 个袋子里球的数目。同时给你一个整数 maxOperations 。
+
+你可以进行如下操作至多 maxOperations 次：
+
+- 选择任意一个袋子，并将袋子里的球分到 2 个新的袋子中，每个袋子里都有 正整数 个球。
+  - 比方说，一个袋子里有 5 个球，你可以把它们分到两个新袋子里，分别有 1 个和 4 个球，或者分别有 2 个和 3 个球。
+
+你的开销是单个袋子里球数目的 最大值 ，你想要 最小化 开销。
+
+请你返回进行上述操作后的最小开销。
+
+```js
+function f(nums, x) {
+    let cnt = 0;
+    for(let i=0; i<nums.length; i++) {
+        cnt += Math.floor(nums[i] / x) + !!(nums[i] % x) - 1;
+    }
+    return cnt;
+}
+
+function bs(nums, l, r, n) {
+    if(l === r) return l;
+    let mid = (l+r) >> 1;
+    if(f(nums, mid) <= n) {
+        r = mid;
+    } else {
+        l = mid + 1;
+    }
+    return bs(nums, l, r, n);
+}
+
+var minimumSize = function(nums, maxOperations) {
+    let l = 1, r;
+    r = Math.max(...nums);
+    return bs(nums, l, r, maxOperations);
+};
+```
 
 
+
+#### 9、leetcode45-跳跃游戏Ⅱ
+
+给定一个非负整数数组，你最初位于数组的第一个位置。
+
+数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+你的目标是使用最少的跳跃次数到达数组的最后一个位置。
+
+假设你总是可以到达数组的最后一个位置。
+
+```js
+var jump = function(nums) {
+    if(nums.length <= 1) return 0;
+    let pre = 1, pos = nums[0];
+    let cnt = 1;
+    while(pos+1 < nums.length) { // 满足条件时，一直向后跳
+        let j = pre;
+        for(let i = pre + 1; i <= pos; i++) {
+            if(i + nums[i] > j + nums[j]) j = i;
+        }
+        pre = pos + 1;
+        pos = j + nums[j];
+        cnt += 1;
+    }
+    return cnt;
+};
+```
+
+
+
+#### 10、leetcode93-复原IP地址
+
+给定一个只包含数字的字符串，用以表示一个 IP 地址，返回所有可能从 s 获得的 **有效 IP 地址** 。你可以按任何顺序返回答案。
+
+**有效 IP 地址** 正好由四个整数（每个整数位于 0 到 255 之间组成，且不能含有前导 0），整数之间用 '.' 分隔。
+
+例如："0.1.2.201" 和 "192.168.1.1" 是 **有效** IP 地址，但是 "0.011.255.245"、"192.168.1.312" 和 "192.168@1.1" 是 **无效** IP 地址。
+
+```js
+function dfs(s, k, ind, ret) {
+    if(ind >= s.length) return;
+    if(k === 4) {
+        let num = 0;
+        // 0开头的数字，也直接return掉
+        if(s.length - ind > 1 && s[ind] === '0') return;
+        for(let i=ind; i<s.length; i++) {
+            num = num * 10 + s[i].charCodeAt() - '0'.charCodeAt();
+            if(num > 255) return;
+        }
+        ret.push(s);
+        return;
+    }
+    for(let i=ind, num = 0; i<s.length; i++) {
+        num = num * 10 + s[i].charCodeAt() - '0'.charCodeAt();
+        if(num > 255) return;
+        if(i - ind >= 1 && s[ind] === '0') return;
+        // 加上点
+        let str = Array.from(s);
+        str.splice(i+1, 0, '.');
+        s = str.join('');
+        dfs(s, k+1, i+2, ret); // 因为 i+1 是个点
+        // 递归回溯，删除点
+        str = Array.from(s);
+        str.splice(i+1, 1);
+        s = str.join('');
+    }
+}
+
+var restoreIpAddresses = function(s) {
+    let ret = [];
+    // 第二个参数：当前正在插入第几个点
+    // 第三个参数：当前这个点，可以插入的第一个合法位置
+    dfs(s, 1, 0, ret)
+    return ret;
+};
+```
+
+
+
+#### 11、leetcode46-全排列
+
+给定一个不含重复数字的数组 `nums` ，返回其 **所有可能的全排列** 。你可以 **按任意顺序** 返回答案。
+
+
+
+#### 12、leetcode43-字符串相乘
+
+给定两个以字符串形式表示的非负整数 `num1` 和 `num2`，返回 `num1` 和 `num2` 的乘积，它们的乘积也表示为字符串形式。
+
+说明：
+
+- num1 和 num2 的长度小于110。
+- num1 和 num2 只包含数字 0-9。
+- num1 和 num2 均不以零开头，除非是数字 0 本身。
+- 不能使用任何标准库的大数类型（比如 BigInteger）或直接将输入转换为整数来处理。
+
+```js
+var multiply = function(num1, num2) {
+    let a = new Array(num1.length);
+    let b = new Array(num2.length);
+    let c = new Array(a.length + b.length - 1).fill(0); // 结果数组
+    for(let i=0; i<num1.length; i++) a[a.length - i - 1] = num1[i].charCodeAt() - '0'.charCodeAt();
+    for(let i=0; i<num2.length; i++) b[b.length - i - 1] = num2[i].charCodeAt() - '0'.charCodeAt();
+    for(let i=0; i<a.length; i++) {
+        for(let j=0; j<b.length; j++) {
+            // i 位 * i 位，应该加到结果数组的 i + i 位上
+            c[i+j] += a[i] * b[j];
+        }
+    }
+    // 处理进位
+    for(let i=0; i<c.length; i++) {
+        if(c[i] < 10) continue;
+        // 最高位进位：扩展一位
+        if(i+1 === c.length) c.push(0);
+        c[i+1] += Math.floor(c[i] / 10);
+        c[i] %= 10;
+    }
+    while(c.length > 1 && c[c.length - 1] === 0) c.pop();
+    let ret = '';
+    for(let i = c.length - 1; i>= 0; i--) ret += c[i].toString();
+    return ret;
+};
+```
 
 
 
