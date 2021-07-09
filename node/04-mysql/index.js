@@ -26,5 +26,10 @@
     )
   `)
 
-  console.log('create:', ret);
+  // 插入数据（占位符）
+  ret = await connection.execute(`INSERT INTO test(message) VALUE (?)`, ['abc'])
+
+  // 查询
+  const [rows, fields] = await connection.execute(`SELECT * FROM test`);
+  console.log('select', rows);
 })()

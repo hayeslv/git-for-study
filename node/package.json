@@ -12,6 +12,7 @@
   "dependencies": {
     "http-proxy-middleware": "^2.0.0",
     "koa": "^2.13.1",
-    "mysql2": "^2.2.5"
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.5"
   }
 }
