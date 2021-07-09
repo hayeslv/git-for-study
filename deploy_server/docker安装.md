@@ -11,7 +11,7 @@ uname -r  #本机<内核版本: 3.10.0-1062.el7.x86_64>
 2、把yum包更新到最新 **这个步骤很有必要**
 
  ```shell
- yum update
+ yum update1
  ```
 
 3、安装需要的软件包, yum-util 提供yum-config-manager功能，另外两个是devicemapper驱动依赖的
