@@ -18,6 +18,15 @@
 
 
 
+#### 启动关闭mysql服务
+
+```shell
+net start mysql
+
+```
+
+
+
 
 
 
