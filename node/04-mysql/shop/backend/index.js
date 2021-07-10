@@ -177,6 +177,7 @@ Product.belongsToMany(Order, {
 
 sequelize.sync().then(
     async result => {
+        // 设置原始数据
         let user = await User.findByPk(1)
         if (!user) {
             user = await User.create({

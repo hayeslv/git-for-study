@@ -93,9 +93,9 @@ docker-compose version
 
 
 
-#### docker-compose安装mysql
+#### 安装mysql（docker-compose方式）
 
-/tool/mysql文件夹下，新建docker-compose.yml
+/docker/mysql文件夹下，新建docker-compose.yml
 
 ```shell
 services:
@@ -131,6 +131,30 @@ docker-compose up -d
 此时在本机访问   ： 虚拟机IP:8080  就可以看到mysql的可视化页面了  
 
 
+
+#### 安装mongodb（docker-compose方式）
+
+/docker/mongo文件夹下
+
+vi docker-compose.yml
+
+```shell
+#将下面代码弄进去
+version: '3.1'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8000:8081
+```
+
+然后执行：docker-compose up -d
 
 
 
