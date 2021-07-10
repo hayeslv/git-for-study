@@ -9,7 +9,8 @@
     
     // 建立连接（数据库名称，用户名，密码）
     const sequelize = new Sequelize('node-test', 'root', '123', {
-      host: 'localhost', // 地址
+      // host: 'localhost', // 地址
+      host: '192.168.2.130',
       dialect: 'mysql',
       operatorsAliases: false // 仍可通过传入 operators map 至 operatorsAliases 的方式来用字符串运算符，但会返回弃用警告
     });

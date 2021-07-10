@@ -93,6 +93,43 @@ docker-compose version
 
 
 
+#### docker-compose安装mysql
+
+/tool/mysql文件夹下，新建docker-compose.yml
+
+```shell
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql  
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+```
+
+然后执行：执行之前记得要开启docker   sudo systemctl start docker
+
+```shell
+docker-compose up -d
+```
+
+此时在本机访问   ： 虚拟机IP:8080  就可以看到mysql的可视化页面了  
+
 
 
 

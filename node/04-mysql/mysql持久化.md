@@ -26,7 +26,7 @@ net start mysql
 
 
 
-#### NodeJS  ORM -Sequelize
+#### NodeJS  ORM -Sequelize（像操作对象一样操作数据库）
 
 传统数据库 => ORM => 对象（业务、应用）
 
