@@ -1,5 +1,3 @@
-const { get } = require("mongoose");
-
 module.exports = {
   async init(ctx, next) {
     const model = ctx.app.$model[ctx.params.list];
