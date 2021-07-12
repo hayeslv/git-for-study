@@ -6,6 +6,7 @@ app.keys = ['some secret'];
 
 const SESS_CONFIG = {
   key: 'kkb:sess', // sid
+  signed: true, // 签名（提高session的安全性）：默认true
 }
 
 // session中间件
