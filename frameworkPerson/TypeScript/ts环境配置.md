@@ -282,6 +282,56 @@ module.exports = {
 
 
 
+### TS + Vue环境配置
+
+添加vue需要的依赖
+
+```shell
+# Vue的依赖（vue3.0）
+npm i vue@next -S
+npm i @vue/compiler-sfc -D
+# Vue的loader
+npm i vue-loader -D
+```
+
+sfc - Single File Component（单文件组件）
+
+新建单文件组件：src/Hellow.vue
+
+```vue
+<template>
+  <div>Hello Vue!</div>
+</template>
+
+<script lang="ts">
+export default {
+};
+</script>
+```
+
+入口文件：src/main.ts
+
+```ts
+import {createApp} from 'vue';
+import Hello from './Hello.vue';
+createApp(Hello).mount('#root');
+```
+
+这时会发现 .vue 文件报错，因为对于vue而言，还需要一个 src/shims-vue.d.ts 文件
+
+```ts
+// 当webpack遇到.vue的文件，这个shims文件会帮助它理解成vue的组件
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent<{}, {}, any>
+  export default component
+}
+```
+
+
+
+
+
 
 
 
