@@ -284,7 +284,7 @@ module.exports = {
 
 ### TS + Vue环境配置
 
-添加vue需要的依赖
+#### Step 1 : 添加vue需要的依赖
 
 ```shell
 # Vue的依赖（vue3.0）
@@ -294,18 +294,24 @@ npm i @vue/compiler-sfc -D
 npm i vue-loader -D
 ```
 
+#### Step 2 : 写一个Vue的SFC和一个bootstraper
+
 sfc - Single File Component（单文件组件）
 
 新建单文件组件：src/Hellow.vue
 
 ```vue
 <template>
-  <div>Hello Vue!</div>
+  <h1>Hello Vue!</h1>
 </template>
+<script lang='ts'>
 
-<script lang="ts">
 export default {
-};
+  setup() {
+    return {
+    }
+  }
+}
 </script>
 ```
 
@@ -317,16 +323,198 @@ import Hello from './Hello.vue';
 createApp(Hello).mount('#root');
 ```
 
-这时会发现 .vue 文件报错，因为对于vue而言，还需要一个 src/shims-vue.d.ts 文件
+这时会发现 .vue 文件报错，因为对于vue而言，还需要一个 src/shims-vue.d.ts 文件，shim（垫片）
 
 ```ts
-// 当webpack遇到.vue的文件，这个shims文件会帮助它理解成vue的组件
+// 当vscode和webpack遇到.vue的文件，这个shims文件会帮助它理解成vue的组件
 declare module '*.vue' {
   import type { DefineComponent } from 'vue';
   const component: DefineComponent<{}, {}, any>
   export default component
 }
 ```
+
+shim（垫片），通常为了处理兼容而命名。上面这个shim的目标是让vscode和webpack等知道.vue的文件，可以当做一个组件定义文件来使用。
+
+
+
+#### Step 3: 写一个vue的webpack.config
+
+webpack.vue.js
+
+```js
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader')
+module.exports = {
+  entry: {
+    index: './src/main.ts' // 编译vue
+  },
+  mode: 'development',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.vue$/] // 给.vue的文件都追加上.ts的后缀
+        },
+        exclude: /node_modules/
+      }, {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js']
+  },
+  output: {
+    filename: 'buidle.[name].js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    port: 3020
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'template.html')
+    }),
+    new VueLoaderPlugin()
+  ]
+}
+```
+
+
+
+#### Step 4 : 增加npm脚本
+
+```json
+ "start:vue": "webpack serve --config ./webpack.vue.js"
+```
+
+
+
+#### Step 5: 试一试
+
+> 注意tsconfig中的jsx需要设置为preserve，也就是保留由ts-loader处理。
+>
+
+```shell
+npm run start:vue
+```
+
+
+
+### Vue + Babel Preset
+
+#### Step 1 : 安装依赖（跳过此步骤）
+
+```shell
+npm i -D babel-preset-typescript-vue3
+```
+
+> 我这边安装依赖后其他命令都不能执行了，不知道为什么，可能是对引用出了问题
+
+#### Step 2: 写一个webpack.config文件
+
+webpack.vue.withbabel.js
+
+```js
+const path = require('path')
+
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
+
+module.exports = {
+  entry: "./src/main.ts" ,
+  mode: "development",
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+				use : {
+					loader : 'babel-loader',
+					options : {
+						presets : [
+							"@babel/preset-env",
+							"babel-preset-typescript-vue3",
+							"@babel/preset-typescript",
+						]
+					}
+				},
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      }
+    ],
+  },
+  resolve: {
+    extensions: [".vue", ".tsx", ".ts", ".js"],
+  },
+  output: {
+    filename: "bundle.[name].js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, "dist"),
+    port: 3020,
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "template.html"),
+    }),
+    new VueLoaderPlugin()
+  ],
+}
+```
+
+#### Step 3 ： 配置npm脚本
+
+```shell
+"start:vue-babel": "webpack serve --config ./webpack.vue.withbabel.js"
+```
+
+#### Step 4: 执行观察结果
+
+```shell
+npm run start:vue-babel
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
