@@ -158,6 +158,28 @@ services:
 
 
 
+#### 安装redis（docker-compose方式）
+
+docker/redis文件夹下（还没尝试）
+
+vi docker-compose.yml
+
+```shell
+version: '3'
+services:
+  redis:
+    image: redis
+    container_name: docker_redis
+    volumes:
+      - ./datadir:/data
+      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./logs:/logs
+    command:
+      redis-server /usr/local/etc/redis/redis.conf"
+    ports:
+      - 6379:6379
+```
+
 
 
 

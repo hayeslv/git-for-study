@@ -1,16 +1,30 @@
 const Koa = require('koa');
 const app = new Koa();
 const session = require('koa-session');
+const redisStore = require('koa-redis');
+const redis = require('redis');
+const redisClient = redis.createClient(6379, 'localhost');
+const wrapper = require('co-redis'); // redis的npm比较老，是回调的方式，使用co-redis对其进行调整，包装成promise风格
+const client = wrapper(redisClient)
 
 app.keys = ['some secret'];
 
 const SESS_CONFIG = {
   key: 'kkb:sess', // sid
+  store: redisStore({ client }),
   signed: true, // 签名（提高session的安全性）：默认true
 }
 
 // session中间件
 app.use(session(SESS_CONFIG, app));
+
+app.use(async (ctx, next) => {
+  const keys = await client.keys('*');
+  keys.forEach(async key => {
+    console.log(await client.get(key));
+  })
+  await next();
+})
 
 app.use(ctx => {
   if(ctx.path === '/favicon.ico') return;
