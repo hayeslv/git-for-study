@@ -166,6 +166,36 @@ pm2 reload all
 
 
 
+**开机自启动**
+
+开启启动设置(可选项: ubuntu, centos, redhat, gentoo, systemd, darwin, amazon)
+
+```shell
+pm2 startup ubuntu 
+```
+
+然后按照提示进行输入
+
+最后保存设置
+
+```shell
+pm2 save
+```
+
+
+
+**pm2在生产环境下运行**
+
+```bash
+NODE_ENV=production pm2 start my-app --update-env
+```
+
+
+
+
+
+
+
 ### 三、PM2集群模式（负载均衡）
 
 集群模式是启动Node.js应用程序时的一种特殊模式，它启动多个进程并在它们之间对HTTP/TCP/UDP进行负载均衡。
