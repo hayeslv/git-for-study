@@ -3,7 +3,7 @@ const app = new Koa();
 const session = require('koa-session');
 const redisStore = require('koa-redis');
 const redis = require('redis');
-const redisClient = redis.createClient(6379, 'localhost');
+const redisClient = redis.createClient(6379, '192.168.2.100');
 const wrapper = require('co-redis'); // redis的npm比较老，是回调的方式，使用co-redis对其进行调整，包装成promise风格
 const client = wrapper(redisClient)
 
@@ -18,10 +18,11 @@ const SESS_CONFIG = {
 // session中间件
 app.use(session(SESS_CONFIG, app));
 
+// 中间件：每次把redis的值打印出来
 app.use(async (ctx, next) => {
   const keys = await client.keys('*');
   keys.forEach(async key => {
-    console.log(await client.get(key));
+    console.log(key,await client.get(key));
   })
   await next();
 })
@@ -36,4 +37,6 @@ app.use(ctx => {
   ctx.body = `第${n}次访问`
 })
 
-app.listen(3000)
+app.listen(3000, () => {
+  console.log('lis 3000');
+})
