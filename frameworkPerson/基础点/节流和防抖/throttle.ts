@@ -1,3 +1,4 @@
+// 节流：每个时间段内只执行一次
 export function throttle(fn: Function, interval: number = 300) {
   let lock = false;
   let I = null;

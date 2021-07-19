@@ -38,7 +38,7 @@ describe("test", () => {
     const subscribe = source.subscribe(i => {
       if(i === 100) {
         subscribe.unsubscribe();
-        expect(count).toBe(11);
+        expect(count).toBe(16);
         done();
       } else {
         addCount();
