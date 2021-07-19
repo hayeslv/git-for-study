@@ -21,6 +21,14 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    sequelize: {
+      dialect: 'mysql',
+      host: '192.168.2.100',
+      port: 3306,
+      username: 'root',
+      password: '123',
+      database: 'node-test',
+    },
   };
 
   return {
