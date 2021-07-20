@@ -23,6 +23,22 @@ module.exports = appInfo => {
     // myAppName: 'egg',
   };
 
+  config.swaggerdoc = {
+    dirScanner: './app/controller',
+    apiInfo: {
+      title: 'dylan接口',
+      description: 'dylan接口 swagger-ui for egg',
+      version: '1.0.0',
+    },
+    schemes: ['http', 'https'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    enableSecurity: false,
+    // enableValidate: true,
+    routerMap: true,
+    enable: true,
+  }
+
   return {
     ...config,
     ...userConfig,
