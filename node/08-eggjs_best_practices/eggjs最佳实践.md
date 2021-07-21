@@ -42,11 +42,11 @@ class UserController extends Controller {
     super(ctx)
   }
   /**
-   * @summary 创建用户
-   * @description 创建用户 记录用户帐户/密码/类型
+   * @summary 创建⽤户
+   * @description 创建⽤户，记录⽤户账户/密码/类型
    * @router post /api/user
    * @request body createUserRequest *body
-   * @response 200 baseReasponse 创建成功
+   * @response 200 baseResponse 创建成功
    */
   async create() {
     const { ctx } = this;
