@@ -20,7 +20,7 @@ const CONFIG = {
     /** (boolean) automatically commit headers (default true) */
     overwrite: false,
     /** (boolean) can overwrite or not (default true) */
-    httpOnly: false,
+    httpOnly: false, //! cookie只读
     /** (boolean) httpOnly or not (default true) */
     signed: false,
     /** (boolean) signed or not (default true) */
@@ -64,8 +64,15 @@ router.get('/', async (ctx) => {
         // from: escape(ctx.query.from), // 从url参数中获取from
         // username: escape(ctx.session.username),
         // text: escape(res[0].text),
+
+        // from: html, //! 演示xss库
     });
 });
+
+//! 演示XSS
+const xss = require('xss');
+let html = xss('<h1 id="title">XSS Demo</h1><script>alert("xss");</script>')
+console.log(html);
 
 //! 演示转码
 // function escape(str) {

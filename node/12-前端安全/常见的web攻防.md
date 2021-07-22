@@ -108,7 +108,7 @@ ejs转义
 
 ```html
 <% code %>	:	用于执行其中javascript代码
-<%= code %>	:	会对code进行html转义
+<%= code %>	:	会对code进行html转义； 推荐
 <%- code %>	:	将不会进行转义
 ```
 
@@ -131,25 +131,48 @@ function escape(str) {
 }
 ```
 
-0.42
+
+
+> 对富文本来说，显然不能通过上面的办法来转义所有字符，因为这样会把需要的格式也过滤掉。对于这种情况，通常采用白名单过滤的办法，当然也可以通过黑名单过滤，但是考虑到需要过滤的标签和标签属性实在太多，更加推荐使用白名单的方式
 
 
 
+##### 4、白名单
+
+```js
+const xss = require('xss')
+let html = xss('<h1 id="title">XSS Demo</h1><script>alert("xss");</script>')
+// -> <h1>XSS Demo</h1>&lt;script&gt;alert("xss");&lt;/script&gt;
+console.log(html)
+```
 
 
 
+##### 5、HttpOnly Cookie
+
+> 这是预防XSS攻击窃取用户cookie最有效的防御手段。Web应 用程序在设置cookie时，将其属性设为HttpOnly，就可以避免该网页的cookie被客户端恶意JavaScript窃取，保护用户 cookie信息。
+>
+
+```js
+response.addHeader("Set-Cookie", "uid=112; Path=/; HttpOnly")
+```
+
+注：cookie在同域的情况下会被请求自动带上，期间其实不需要js参与
 
 
 
+### 二、CSRF
+
+> CSRF(Cross Site Request Forgery)，即跨站请求伪造，是一种常见的Web攻击，它利用用户已登录的身份，在用户毫不知情的情况下，以用户的名义完成非法操作。
+>
+
+- 用户已经登录了站点 A，并在本地记录了 cookie
+- 在用户没有登出站点 A 的情况下（也就是 cookie 生效的情况下），访问了恶意攻击者提供的引诱 危险站点 B (B 站点要求访问站点A)。
+- 站点 A 没有做任何 CSRF 防御
 
 
 
-
-
-
-
-
-
+0.56
 
 
 
