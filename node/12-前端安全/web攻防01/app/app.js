@@ -41,10 +41,9 @@ app.use(async (ctx, next) => {
     // 参数出现在HTML内容或属性浏览器会拦截
     ctx.set('X-XSS-Protection', 0)
     // ctx.set('Content-Security-Policy', "default-src 'self'") //! CSP测试
-    ctx.set('X-FRAME-OPTIONS', 'DENY')
-    // const referer = ctx.request.header.referer
-    // console.log('Referer:', referer)
+    ctx.set('X-FRAME-OPTIONS', 'DENY') //! 防点击劫持
 
+    //! 查看网站调用的源
     // const referer = ctx.request.header.referer
     // console.log('Referer:', referer)
 
@@ -111,6 +110,19 @@ router.post('/login', async (ctx) => {
         ctx.redirect('/?from=china')
         ctx.session.username = ctx.request.body.username
     }
+
+    // SQL规约 --- 传参的方式（防止SQL注入）：原因是这段代码对他进行了转化
+    // let sql = `
+    // SELECT *
+    // FROM test.user
+    // WHERE username = ?
+    // AND password = ?
+    // `
+    // res = await query(sql, [username, password]);
+    // if (res.length !== 0) {
+    //     ctx.redirect('/?from=china')
+    //     ctx.session.username = ctx.request.body.username
+    // }
 
     // if (res.length !== 0 && res[0].salt === null) {
     //     console.log('no salt ..')
