@@ -10,7 +10,7 @@ const views = require('koa-views');
 const query = require('./db')
 app.keys = ['some secret hurr'];
 const CONFIG = {
-    key: 'kaikeba:sess',
+    key: 'cookie:sess',
     /** (string) cookie key (default is koa:sess) */
     /** (number || 'session') maxAge in ms (default is 1 days) */
     /** 'session' will result in a cookie that expires when session/browser is closed */
@@ -40,7 +40,7 @@ app.use(async (ctx, next) => {
     await next()
     // 参数出现在HTML内容或属性浏览器会拦截
     ctx.set('X-XSS-Protection', 0)
-    // ctx.set('Content-Security-Policy', "default-src 'self'")
+    // ctx.set('Content-Security-Policy', "default-src 'self'") //! CSP测试
     ctx.set('X-FRAME-OPTIONS', 'DENY')
     // const referer = ctx.request.header.referer
     // console.log('Referer:', referer)
@@ -57,11 +57,27 @@ router.get('/', async (ctx) => {
     res = await query('select * from test.text')
     // ctx.set('X-FRAME-OPTIONS', 'DENY')
     await ctx.render('index', {
-        from: ctx.query.from,
+        from: ctx.query.from, // 从url参数中获取from
         username: ctx.session.username,
         text: res[0].text,
+        //! 演示转码
+        // from: escape(ctx.query.from), // 从url参数中获取from
+        // username: escape(ctx.session.username),
+        // text: escape(res[0].text),
     });
 });
+
+//! 演示转码
+// function escape(str) {
+//     str = str.replace(/&/g, '&amp;')
+//     str = str.replace(/</g, '&lt;')
+//     str = str.replace(/>/g, '&gt;')
+//     str = str.replace(/"/g, '&quto;')
+//     str = str.replace(/'/g, '&#39;')
+//     str = str.replace(/`/g, '&#96;')
+//     str = str.replace(/\//g, '&#x2F;')
+//     return str
+// }
 
 
 

