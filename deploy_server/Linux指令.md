@@ -26,7 +26,7 @@ sudo apt-get install lrzsz
 sz 【file】 --->可将服务器的文件下载到本地
 ```
 
-
+docker cp 本地文件路径 ID全称:容器路径
 
 
 

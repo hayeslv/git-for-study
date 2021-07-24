@@ -138,7 +138,7 @@ docker-compose up -d
 
 vi docker-compose.yml
 
-```shell
+```bash
 #将下面代码弄进去
 version: '3.1'
 services:
@@ -147,11 +147,14 @@ services:
     restart: always
     ports:
       - 27017:27017
+    volumes:
+      - ./data/:/data/db
+      - ./copydata:/dump/
   mongo-express:
     image: mongo-express
     restart: always
     ports:
-      - 8000:8081
+      - 27018:8081
 ```
 
 然后执行：docker-compose up -d
