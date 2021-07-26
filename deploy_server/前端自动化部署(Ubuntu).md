@@ -1,6 +1,6 @@
 大致流程如下：
 
-![githook](F:\study\git-for-study\deploy_server\img\githook.png)
+![githook](assets/githook.png)
 
 
 

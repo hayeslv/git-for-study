@@ -121,7 +121,7 @@ root@f54dfcdb4cbf:/dump/mongoData# cp -r oversee-store/ /dump
 ```bash
 mongorestore -h 127.0.0.1:27017 -u='root' -p='123456' -d testDB /dump/testDB
 # 我的
-mongorestore -h 127.0.0.1:27017  -d oversee-store /dump/oversee-store 
+我这里没有密码，例如：mongorestore -h 127.0.0.1:27017  -d 222 /dump/222 
 ```
 
 
