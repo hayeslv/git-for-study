@@ -169,7 +169,7 @@ npm install node-schedule child_process --save
 
 ```json
 {
-    "name": "AliyunServer",
+    "name": "xxxxxx",
     "host": "xx.xx.xx.xx",    
     "port": 22,     
     "username": "root", 
@@ -199,22 +199,27 @@ src/mongo_data_backup.sh
 ```bash
 #!/bin/bash
 # 定时任务源码位置
-# WEB_PATH='/root/schedule/mongo/src' 
 DATA_SAVE_PATH='/root/schedule/mongo/data-save' # 数据备份存放处
 DOCKER_COPY_DATA='/root/source/docker/mongo/copydata' # docker内mongo数据库导出数据的映射地址
 currentdate=$(date +%Y%m%d%H%M%S) # 当前日期+时间
 
-# echo "------ 进入项目目录，开始执行shell ------"
-# cd $WEB_PATH
 echo "------ 在docker内部执行操作（数据库备份） ------"
-docker exec -it mongo_mongo_1 bash -c 'mongodump -h 127.0.0.1  -d oversee-store -o /dump' && 
+# 删除docker内备份文件夹下的内容（-f强制删除，忽略错误提示）
+docker exec -i mongo_mongo_1 bash -c 'rm -rf -f /dump/oversee-store/*' &&
+
+# 数据库备份指令
+# 不要 -t 因为 -t是分配的一个伪终端。这里不需要分配伪终端。
+docker exec -i mongo_mongo_1 bash -c 'mongodump -h 127.0.0.1  -d oversee-store -o /dump' &&
+
 echo "------ 压缩 ------"
 cd $DOCKER_COPY_DATA
 zip -r oversee-store$currentdate.zip oversee-store/ &&
+
 echo "------ 复制压缩包到指定位置 ------"
 cp -r oversee-store$currentdate.zip /root/schedule/mongo/data-save &&
+
 echo "------ 删除当前位置的压缩包 ------"
-rm oversee-store$currentdate.zip
+rm oversee-store$currentdate.zip &&
 echo "------ end ------"
 
 ```
@@ -229,7 +234,7 @@ src/mongo_data_backup.js
 const schedule = require('node-schedule');
 
 function run_cmd(cmd, args, callback) {
-  var spawn = require('child_process').spawn;
+  const { spawn } = require('child_process')
   var child = spawn(cmd, args);
   var resp = "";
 
@@ -238,13 +243,16 @@ function run_cmd(cmd, args, callback) {
 }
 
 const scheduleCronstyle = ()=>{
-  // 每分钟的第30秒定时执行一次:
-  schedule.scheduleJob('30 * * * * *',()=>{
+  // 每分钟的第30秒定时执行一次: 30 * * * * *
+  // 秒数10的倍数执行： */10 * * * * *
+  // 每天的0点0分0秒触发： 0 0 0 * * *
+  schedule.scheduleJob('0 0 0 * * *',()=>{
     run_cmd('sh', ['./mongo_data_backup.sh'], function(text){ console.log(text) });
   }); 
 }
 
 scheduleCronstyle()
+
 ```
 
 
@@ -288,7 +296,13 @@ unzip oversee-store20210727162430.zip
 #### 恢复数据库
 
 ```bash
-docker exec -it mongo_mongo_1 bash -c 'mongodump -h 127.0.0.1  -d oversee-store -o /dump'
+# 删除docker中的备份
+docker exec -i mongo_mongo_1 bash -c 'rm -rf -f /dump/*'
+# 查看docker的id全称
+docker inspect -f '{{.Id}}' mongo_mongo_1    # 得到 f54dfcdb4cbf4f3148b263f6f5005502752fd6cfa5a706e388d9198ac1c6f8ca
+# 将文件传入docker
+docker cp /home/lhz/docker/mongo/dump/oversee-store f54dfcdb4cbf4f3148b263f6f5005502752fd6cfa5a706e388d9198ac1c6f8ca:/dump
+docker exec -it mongo_mongo_1 bash -c 'mongorestore -h 127.0.0.1  -d oversee-store /dump/oversee-store'
 ```
 
 
