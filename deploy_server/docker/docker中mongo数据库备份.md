@@ -157,22 +157,13 @@ npm install node-schedule child_process --save
 
 
 
-项目中写docker内部执行的脚本  /src/mongo_data_docker.sh
-
-```sh
-#!/bin/bash
-# docker容器内部执行的sh脚本
-WEB_PATH='/shell'
-
-echo "------ 进入项目目录，开始执行shell ------"
-cd $WEB_PATH
-mongodump -h 127.0.0.1  -d oversee-store -o /dump &&
-echo "------ 数据库备份完成 ------"
-```
+### 2、配置docker卷（见上面）
 
 我这里配置了docker的volumes，容器中/dump的内容会在服务器的/root/source/docker/mongo/copydata 目录下
 
 
+
+### 3、SFTP配置
 
 项目配置SFTP  .vscode/sftp.json
 
@@ -197,25 +188,108 @@ echo "------ 数据库备份完成 ------"
 }
 ```
 
+> 上传服务器后，进行npm install
 
 
-将shell脚本传入至docker容器
+
+### 4、编写sh脚本
+
+src/mongo_data_backup.sh
 
 ```bash
-docker cp /root/schedule/mongo/src/mongo_data_docker.sh 6a82beb39a3685491a2ca72f078c81070e083a2177afced0857cf04229b4baaf:/shell
+#!/bin/bash
+# 定时任务源码位置
+# WEB_PATH='/root/schedule/mongo/src' 
+DATA_SAVE_PATH='/root/schedule/mongo/data-save' # 数据备份存放处
+DOCKER_COPY_DATA='/root/source/docker/mongo/copydata' # docker内mongo数据库导出数据的映射地址
+currentdate=$(date +%Y%m%d%H%M%S) # 当前日期+时间
+
+# echo "------ 进入项目目录，开始执行shell ------"
+# cd $WEB_PATH
+echo "------ 在docker内部执行操作（数据库备份） ------"
+docker exec -it mongo_mongo_1 bash -c 'mongodump -h 127.0.0.1  -d oversee-store -o /dump' && 
+echo "------ 压缩 ------"
+cd $DOCKER_COPY_DATA
+zip -r oversee-store$currentdate.zip oversee-store/ &&
+echo "------ 复制压缩包到指定位置 ------"
+cp -r oversee-store$currentdate.zip /root/schedule/mongo/data-save &&
+echo "------ 删除当前位置的压缩包 ------"
+rm oversee-store$currentdate.zip
+echo "------ end ------"
+
 ```
 
 
 
-执行shell脚本
+### 5、编写定时器
 
-sh mongo_data_backup.sh
+src/mongo_data_backup.js
 
-报错：bash: /shell/mongo_data_docker.sh: Permission denied
+```js
+const schedule = require('node-schedule');
 
-解决方法：
+function run_cmd(cmd, args, callback) {
+  var spawn = require('child_process').spawn;
+  var child = spawn(cmd, args);
+  var resp = "";
+
+  child.stdout.on('data', function(buffer) { resp += buffer.toString(); });
+  child.stdout.on('end', function() { callback (resp) });
+}
+
+const scheduleCronstyle = ()=>{
+  // 每分钟的第30秒定时执行一次:
+  schedule.scheduleJob('30 * * * * *',()=>{
+    run_cmd('sh', ['./mongo_data_backup.sh'], function(text){ console.log(text) });
+  }); 
+}
+
+scheduleCronstyle()
+```
 
 
+
+### 6、使用pm2启动js服务
+
+```bash
+pm2 start mongo_data_backup.js --name mongoDataBackup
+```
+
+可以看到 /root/schedule/mongo/data-save/ 文件夹下已经开始有打包数据了
+
+
+
+### 7、传入本机保存
+
+在/root/schedule/mongo/data-save/文件夹下
+
+```bash
+sz oversee-store20210727162430.zip
+```
+
+即可下载到本机了
+
+或者SFTP整个拉取（看个人爱好）
+
+
+
+### 8、恢复数据库（oversee-store是数据库名称）
+
+#### 解压缩
+
+```bash
+# 将压缩包上传至另外一台服务器后  
+unzip dump.zip
+# 我的
+cd /home/lhz/docker/mongo/dump
+unzip oversee-store20210727162430.zip
+```
+
+#### 恢复数据库
+
+```bash
+docker exec -it mongo_mongo_1 bash -c 'mongodump -h 127.0.0.1  -d oversee-store -o /dump'
+```
 
 
 
