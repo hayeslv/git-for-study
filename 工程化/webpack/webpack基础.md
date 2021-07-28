@@ -133,7 +133,7 @@ bundle对应一个chunks
 
 ### 5、插件
 
-#### HtmlWebpackPlugin
+#### （1）HtmlWebpackPlugin
 
 > 作用：自动生成html文件，引入bundle文件，压缩html
 
@@ -205,6 +205,37 @@ plugins: [
   })
 ]
 ```
+
+
+
+#### （2）mini-cssextract-plugin
+
+> 把css抽离成独立文件，不用style的内联
+
+```bash
+npm i mini-css-extract-plugin@1.6.2 -S
+```
+
+修改webpack.config.js文件
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+module: {
+  rules: [
+    {
+      test: /\.css$/,
+      use: [MiniCssExtractPlugin.loader, "css-loader"]
+    },
+  ]
+},
+plugins: [
+  new MiniCssExtractPlugin({
+    filename: "css/index.css"
+  })
+]
+```
+
+
 
 
 
@@ -317,13 +348,108 @@ rules: [
 
 ### 3、postcss：强大的工具集
 
-> postCSS是一个处理css的工具
+> postCSS是用js插件处理css的工具
 
 ```bash
 npm i postcss postcss-loader@4.2.0 -D
 ```
 
+修改rules
 
+```js
+{
+  test: /\.less$/,
+  use: [
+    "style-loader", 
+    {
+      loader: "css-loader",
+      options: {
+        modules: true
+      }
+    }, 
+    "postcss-loader",
+    "less-loader"
+  ]
+}
+```
+
+#### autoprefixer
+
+> autoprefixer 添加了vendor浏览器前缀，它使用 Can I Use 上面的数据
+
+```bash
+npm i autoprefixer -D
+```
+
+postcss作为一个强大的工具集，它是有自己的配置文件的
+
+在跟目录下新建配置文件：postcss.config.js
+
+```js
+module.exports = {
+  plugins: [
+    require('autoprefixer')
+  ]
+}
+```
+
+打包后发现并没有给css加上相应的浏览器前缀，这是因为它需要知道目标浏览器集合
+
+> 做了下面 browserslist 的操作后，再打包，就可以看到浏览器前缀被加上去了
+
+
+
+#### browserslist
+
+> 声明一段浏览器集合
+>
+> 用到集合的工具会根据browserslist的描述，针对性的输出兼容性的代码
+
+例如：autoprefixer、babel preset-env 等
+
+**使用方式1**：package.json 中
+
+```js
+"browserslist": [ "> 1%", "last 2 versions" ]
+```
+
+- 1% ：指全球市场占有率大于1%的浏览器
+- last 2 versions ：兼容浏览器的最近两个大版本
+  - 对于ie浏览器来说：11、10
+
+**使用方式2**：使用自己的配置文件  .browserslistrc
+
+```bash
+>1%
+last 2 versions
+```
+
+查看符合规则的浏览器版本（我这边没成功）：
+
+```bash
+npx browserslist "last 2 versions, >1%"
+```
+
+
+
+#### cssnano
+
+> 一个模块化的css压缩器：主要是去掉一些换行符、空白符
+
+```bash
+npm i cssnano -D
+```
+
+修改postcss.config.js文件
+
+```js
+module.exports = {
+  plugins: [
+    require('autoprefixer'),
+    require('cssnano')
+  ]
+}
+```
 
 
 
