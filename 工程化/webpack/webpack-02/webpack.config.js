@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: "./src/index.js",
@@ -9,6 +10,9 @@ module.exports = {
     filename: "[name].js"
   },
   mode: "development", // development production none
+  resolveLoader: {
+    modules: ["node_modules", "./myLoaders"]
+  },
   // 模块：支持更多类型的模块
   module: {
     rules: [
@@ -33,6 +37,18 @@ module.exports = {
           "postcss-loader",
           "less-loader"
         ]
+      },
+      {
+        test: /\.js$/,
+        use: [
+          'lhz-loader',
+          {
+            loader: 'lhz-loader-async',
+            options: {
+              name: 'dylan'
+            }
+          }, 
+        ]
       }
     ]
   },
@@ -43,6 +59,7 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: "css/index.css"
-    })
+    }),
+    new CleanWebpackPlugin()
   ]
 }

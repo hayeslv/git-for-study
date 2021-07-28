@@ -213,7 +213,7 @@ plugins: [
 > 把css抽离成独立文件，不用style的内联
 
 ```bash
-npm i mini-css-extract-plugin@1.6.2 -S
+npm i mini-css-extract-plugin@1.6.2 -D
 ```
 
 修改webpack.config.js文件
@@ -233,6 +233,21 @@ plugins: [
     filename: "css/index.css"
   })
 ]
+```
+
+
+
+#### （3）clean-webpack-plugin
+
+> 清理打包目标
+
+```bash
+npm i clean-webpack-plugin -D
+```
+
+```js
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+new CleanWebpackPlugin()
 ```
 
 
@@ -447,6 +462,183 @@ module.exports = {
   plugins: [
     require('autoprefixer'),
     require('cssnano')
+  ]
+}
+```
+
+
+
+### 4、自定义实现loader
+
+[webpack的loaderAPI](https://www.webpackjs.com/api/loaders/)
+
+> loader的本质是模块编译器
+>
+> webpack：自身不强大，但是认识的人多。可以把内容交给其他loader或plugin处理
+
+修改index.js中的内容
+
+```js
+console.log('hello loader');
+```
+
+修改webpack.config.js中的rules
+
+```js
+{
+  test: /\.js$/,
+  use: path.resolve(__dirname, './myLoaders/lhz-loader.js')
+}
+```
+
+新建自己的loader： myLoaders/lhz-loader.js
+
+```js
+// 1、函数，不可以是箭头函数：因为在函数内部要使用到this
+// 2、loader必须有返回值
+module.exports = function(source) {
+  console.log(source);
+  return source.replace("loader", "my girl");
+}
+```
+
+这时候打包，可以看到控制台输出：`hello my girl`
+
+
+
+**设置options**
+
+webpack.config.js修改rules
+
+```js
+{
+  test: /\.js$/,
+  use: {
+    loader: path.resolve(__dirname, './myLoaders/lhz-loader.js'),
+    options: {
+      name: 'dylan'
+    }
+  }
+}
+```
+
+#### this.query
+
+loader中获取options
+
+根据webpack的loader api中 this.query
+
+> 1、如果这个loader配置了options对象的话，this.query 就是指向这个option对象。
+>
+> 2、如果loader中没有options，而是以query字符串作为参数调用时，this.query 就是一个以 ？ 开头的字符串
+
+
+
+#### this.callback
+
+> 一个可以同步或者异步调用的可以返回多个结果的函数
+
+```js
+// myLoaders\lhz-loader.js
+module.exports = function(source) {
+  const result = source.replace("loader", this.query.name);
+  this.callback(null, result); // 同步使用
+}
+```
+
+
+
+#### this.async
+
+> 告诉 [loader-runner](https://github.com/webpack/loader-runner) 这个 loader 将会异步地回调。返回 `this.callback`。
+
+this.async()：告诉loader的解析器，我这个loader存在异步的回调。
+
+```js
+// myLoaders\lhz-loader.js
+module.exports = function(source) {
+  const callback = this.async();
+  setTimeout(() => {
+    const result = source.replace("loader", this.query.name);
+    callback(null, result);
+  }, 3000)
+}
+```
+
+
+
+#### 多个loader如何配合
+
+```js
+// webpack.config.js  --- rules
+{
+  test: /\.js$/,
+  use: [
+    path.resolve(__dirname, './myLoaders/lhz-loader.js'),
+    {
+      loader: path.resolve(__dirname, './myLoaders/lhz-loader-async.js'),
+      options: {
+        name: 'dylan'
+      }
+    }, 
+  ]
+}
+```
+
+```js
+// myLoaders\lhz-loader.js
+module.exports = function(source) {
+  const result = source.replace("hello", '雷猴啊~');
+  return result;
+}
+```
+
+```js
+// myLoaders\lhz-loader-async.js
+module.exports = function(source) {
+  const callback = this.async();
+  setTimeout(() => {
+    const result = source.replace("loader", this.query.name);
+    callback(null, result);
+  }, 3000)
+}
+```
+
+入口index.js中的代码是：`console.log('hello loader');`
+
+最后打包输出是：雷猴啊~ dylan
+
+> webpack的loader有执行顺序，plugins没有执行顺序
+
+
+
+#### 自定义loader的路径
+
+可以看到我们自己写的loader，使用的时候需要引用一长串路径。例如：
+
+```js
+path.resolve(__dirname, './myLoaders/lhz-loader-async.js'),
+```
+
+```js
+// webpack.config.js
+resolveLoader: {
+  modules: ["node_modules", "./myLoaders"]
+},
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      use: [
+        'lhz-loader',
+        {
+          loader: 'lhz-loader-async',
+          options: {
+            name: 'dylan'
+          }
+        }, 
+      ]
+    }
   ]
 }
 ```
