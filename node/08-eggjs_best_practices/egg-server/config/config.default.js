@@ -16,7 +16,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1626740909394_6985';
 
   // add your middleware config here
-  config.middleware = [];
+  config.middleware = ['errorHandler'];
 
   // add your user config here
   const userConfig = {
@@ -35,9 +35,20 @@ module.exports = appInfo => {
     produces: ['application/json'],
     enableSecurity: false,
     // enableValidate: true,
-    routerMap: true,
+    routerMap: true, // 自动产生路由映射
     enable: true,
+  };
+
+  config.mongoose = {
+    url: 'mongodb://192.168.2.133:27017/egg_db',
+    options: {
+      // useMongoClient: true,
+      autoReconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      bufferMaxEntries: 0,
+    },
   }
+
 
   return {
     ...config,
