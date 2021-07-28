@@ -1,4 +1,6 @@
-### webpack安装
+## 一、webpack-01工程
+
+### 1、webpack安装
 
 - 局部安装（推荐）
 
@@ -26,7 +28,7 @@ npx webpack
 
 
 
-### webpack配置
+### 2、webpack配置
 
 ```js
 // webpack是基于bodeJS的，核心模块API，可以放心使用
@@ -53,7 +55,7 @@ module.exports = {
 
 
 
-### 单入口、多入口
+### 3、单入口、多入口
 
 entry可以是单入口（spa）或多入口（mpa）的
 
@@ -97,7 +99,7 @@ output: {
 
 
 
-### chunk：代码片段
+### 4、chunk：代码片段
 
 Index：
 
@@ -129,7 +131,7 @@ bundle对应一个chunks
 
 
 
-### 插件
+### 5、插件
 
 #### HtmlWebpackPlugin
 
@@ -205,6 +207,121 @@ plugins: [
 ```
 
 
+
+## 二、webpack-02工程
+
+### 1、css支持
+
+> webpack默认只支持 js 和 json 文件
+
+项目中新建文件 src/style/index.css
+
+```css
+body{
+  background-color: red;
+}
+```
+
+入口文件引入css模块：src/index.js
+
+```js
+import css from './style/index.css'
+```
+
+#### css-loader
+
+引入对应的 loader：这里要匹配webpack4x的版本，不配置版本的话css-loader默认给的最新（webpack5x的版本）
+
+```bash
+npm i css-loader@5.2.6 -D
+```
+
+修改webpack.config.js文件
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.css$/,
+      use: "css-loader"
+    }
+  ]
+},
+```
+
+> css-loader就是对我们的代码进行了一次序列化，使其可以顺利的打包到我们的chunk中（但是不会起页面效果，因为它不会告诉浏览器怎么使用）
+
+#### style-loader
+
+```bash
+npm i style-loader@2.0.0 -D
+```
+
+修改rules
+
+```js
+rules: [
+  {
+    test: /\.css$/,
+    // 当多个loader作用于一个模块的时候，执行顺序是自右向左的
+    use: ["style-loader", "css-loader"]
+  }
+]
+```
+
+此时再执行打包
+
+```bash
+npm run build:dev
+```
+
+就可以看到页面变红了
+
+### 2、less支持
+
+> less-loader功能：将less转换成css
+
+```bash
+npm i less less-loader@7.3.0 -D
+```
+
+新建less文件：src/style/index.less
+
+```less
+body{
+  div{
+    height: 100px;
+    background-color: blue;
+  }
+}
+```
+
+src/index.js
+
+```js
+import css from './style/index.less'
+```
+
+添加rules
+
+```js
+rules: [
+  {
+    test: /\.less$/,
+    use: ["style-loader", "css-loader", "less-loader"]
+  }
+]
+```
+
+
+
+### 3、postcss：强大的工具集
+
+> postCSS是一个处理css的工具
+
+```bash
+npm i postcss postcss-loader@4.2.0 -D
+```
 
 
 
