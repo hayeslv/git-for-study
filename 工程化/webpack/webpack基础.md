@@ -645,6 +645,105 @@ module: {
 
 
 
+### 5、实现简版：css-loader、less-loader、style-loader
+
+> 没有提供option
+
+修改less的规则
+
+```js
+// webpack.config.js
+{
+  test: /\.less$/,
+  use: [
+    "lhz-style-loader", 
+    "lhz-css-loader", 
+    "lhz-less-loader"
+  ]
+},
+```
+
+```js
+// src/index.js
+import css from './style/index.less'
+```
+
+```less
+// src/style/index.less
+body{
+  div{
+    display: flex;
+    height: 100px;
+    background-color: blue;
+  }
+}
+```
+
+
+
+#### lhz-less-loader
+
+```js
+// myLoaders/lhz-less-loader.js
+// 作用：less 转成 css
+
+// 这里也是为什么安装less-loader的时候需要安装less的原因
+const less = require('less');
+
+module.exports = function(source) {
+  less.render(source, (error, output) => {
+    const cssInfo = output.css;
+    this.callback(error, cssInfo);
+  })
+}
+```
+
+#### lhz-css-loader
+
+```js
+// myLoaders/lhz-css-loader.js
+// 作用：将css语法序列化
+
+module.exports = function(source) {
+  return JSON.stringify(source);
+}
+```
+
+#### lhz-style-loader
+
+```js
+// myLoaders/lhz-style-loader.js
+// 作用：动态创建style标签，内容是上一个loader返回的信息，dom操作塞入文档头部
+
+module.exports = function(source) {
+  return `
+    const tag = document.createElement("style");
+    tag.innerHTML = ${source};
+    document.head.appendChild(tag);
+  `;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,1 +1,2 @@
-console.log('hello loader');
+// console.log('hello loader');
+import css from './style/index.less'

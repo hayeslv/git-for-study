@@ -27,29 +27,23 @@ module.exports = {
       {
         test: /\.less$/,
         use: [
-          "style-loader", 
-          {
-            loader: "css-loader",
-            options: {
-              modules: false
-            }
-          }, 
-          "postcss-loader",
-          "less-loader"
+          "lhz-style-loader", 
+          "lhz-css-loader", 
+          "lhz-less-loader"
         ]
       },
-      {
-        test: /\.js$/,
-        use: [
-          'lhz-loader',
-          {
-            loader: 'lhz-loader-async',
-            options: {
-              name: 'dylan'
-            }
-          }, 
-        ]
-      }
+      // {
+      //   test: /\.js$/,
+      //   use: [
+      //     'lhz-loader',
+      //     {
+      //       loader: 'lhz-loader-async',
+      //       options: {
+      //         name: 'dylan'
+      //       }
+      //     }, 
+      //   ]
+      // }
     ]
   },
   plugins: [

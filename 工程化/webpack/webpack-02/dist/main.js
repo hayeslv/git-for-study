@@ -90,10 +90,22 @@
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _style_index_less__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style/index.less */ \"./src/style/index.less\");\n/* harmony import */ var _style_index_less__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_index_less__WEBPACK_IMPORTED_MODULE_0__);\n// console.log('hello loader');\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
+
+/***/ }),
+
+/***/ "./src/style/index.less":
+/*!******************************!*\
+  !*** ./src/style/index.less ***!
+  \******************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("console.log('雷猴啊~ dylan');\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("\n    const tag = document.createElement(\"style\");\n    tag.innerHTML = \"body div {\\n  display: flex;\\n  height: 100px;\\n  background-color: blue;\\n}\\n\";\n    document.head.appendChild(tag);\n  \n\n//# sourceURL=webpack:///./src/style/index.less?");
 
 /***/ })
 
