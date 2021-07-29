@@ -67,7 +67,7 @@
             methods: {
                 async create() {
                     await axios.post('/api/user', {
-                        mobile: '13611388416',
+                        mobile: '13611388415',
                         password: '111111',
                         realName: '老夏',
                     })
@@ -84,7 +84,7 @@
                 },
                 async login() {
                     const res = await axios.post('/auth/jwt/login', {
-                        mobile: '13611388416',
+                        mobile: '13611388415',
                         password: '111111'
                     })
                     localStorage.setItem("token", res.data.data.token);
