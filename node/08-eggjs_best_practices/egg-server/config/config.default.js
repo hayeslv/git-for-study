@@ -47,7 +47,13 @@ module.exports = appInfo => {
       reconnectTries: Number.MAX_VALUE,
       bufferMaxEntries: 0,
     },
-  }
+  };
+
+  config.jwt = {
+    secret: 'Great4-M',
+    enable: true, // default is false
+    match: /^\/api/, // optional
+  };
 
 
   return {

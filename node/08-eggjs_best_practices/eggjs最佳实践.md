@@ -411,17 +411,226 @@ async create() {
 
 == 如何准备测试数据与清理现场
 
-1.35
+**创建基础数据**
+
+推荐用mongoose或者service方法，不要用sql
+
+**清理现场**
+
+每次启动的时候还原测试数据
+
+```js
+// /app.js
+// 如果实现了app.js，egg会在这里提供一些钩子，此时可以把初始化数据的操作放在相应的钩子里
+class AppBootHook {
+  constructor(app) {
+    this.app = app;
+    app.root_path = __dirname;
+  }
+  configWillLoad() {
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
+  }
+  configDidLoad() {
+    // Config, plugin files have been loaded.
+  }
+  async didLoad() {
+    // All files have loaded, start plugin here.
+  }
+  async willReady() {
+    // All plugins have started, can do some thing before app ready
+  }
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+    console.log('========Init Data=========')
+    const ctx = await this.app.createAnonymousContext();
+    // 如果多个表，可以在这里全部干掉
+    await ctx.model.User.remove();
+    // 在这里进行测试数据初始化
+    await ctx.service.user.create({
+      mobile: '13611388415',
+      password: '111111',
+      realName: '海爷',
+    })
+  }
+  async serverDidReady() {}
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+
+module.exports = AppBootHook;
+```
+
+此时启动 `npm run dev` 后，去mongodb里面查看，即可看到users这张表的数据被初始化我们想要的了
 
 
 
+### 九、用户鉴权模块
+
+注册jwt模块
+
+```bash
+npm i egg-jwt -S
+```
+
+```js
+// config/plugin.js
+jwt: {
+ enable: true,
+ package: 'egg-jwt',
+}
+```
+
+```js
+// config/config.default.js
+config.jwt = {
+  secret: 'Great4-M',
+  enable: true, // default is false
+  match: /^\/api/, // optional
+}
+```
+
+所有 /api 的接口都需要鉴权，登录登出等不用鉴权的接口：  /auth/login     /auth/logout
+
+```js
+// app/service/actionToken.js
+'use strict'
+const { Service } = require('egg')
+class ActionTokenService extends Service {
+  async apply(_id) {
+    const { ctx } = this
+    return ctx.app.jwt.sign({
+      data: { _id: _id },
+      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7)
+    }, ctx.app.config.jwt.secret)
+  }
+}
+module.exports = ActionTokenService
+```
+
+```js
+// app/service/userAccess.js
+'use strict'
+const { Service } = require('egg')
+class UserAccessService extends Service {
+  async login(payload) {
+    const { ctx, service } = this
+    const user = await service.user.findByMobile(payload.mobile)
+    if (!user) {
+      ctx.throw(404, 'user not found') // 这里是因为外层之前做了接收错误处理
+    }
+    let verifyPsw = await ctx.compare(payload.password, user.password)
+    if (!verifyPsw) {
+      ctx.throw(404, 'user password is error')
+    }
+    // ⽣成Token令牌
+    return {
+      token: await service.actionToken.apply(user._id)
+    }
+  }
+  // 其实不存在logout功能，token直接在客户端丢弃就可以了。这里预留一个登出功能
+  async logout() {}
+  // 拿出当前登录用户的登录信息
+  async current() {
+    const { ctx, service } = this
+    // ctx.state.user 可以提取到JWT编码的data
+    const _id = ctx.state.user.data._id
+    const user = await service.user.find(_id)
+    if (!user) {
+      ctx.throw(404, 'user is not found')
+    }
+    // 密码不返回
+    user.password = ''
+    return user
+  }
+}
+module.exports = UserAccessService
+```
 
 
 
+Contract层
+
+```js
+// app/contract/userAccess.js
+module.exports = {
+  loginRequest: {
+    mobile: { 
+      type: 'string', 
+      required: true, 
+      description: '⼿机号', 
+      example: '18801731528', 
+      format: /^1[34578]\d{9}$/, 
+    },
+    password: { 
+      type: 'string', 
+      required: true, 
+      description: '密码', 
+      example: '111111', 
+    },
+  },
+}
+```
 
 
 
+Controller层：把内容暴露出去
 
+```js
+// app/controller/userAccess.js
+'use strict'
+const { Controller } = require('egg')
+/**
+ * @Controller ⽤户鉴权
+ */
+class UserAccessController extends Controller {
+  constructor(ctx) {
+    super(ctx)
+  }
+  /**
+   * @summary ⽤户登⼊
+   * @description ⽤户登⼊
+   * @router post /auth/jwt/login
+   * @request body loginRequest *body
+   * @response 200 baseResponse 创建成功
+   */
+  async login() {
+    const { ctx, service } = this
+    // 校验参数
+    ctx.validate(ctx.rule.loginRequest);
+    // 组装参数
+    const payload = ctx.request.body || {}
+    // 调⽤ Service 进⾏业务处理
+    const res = await service.userAccess.login(payload)
+    // 设置响应内容和响应状态码
+    ctx.helper.success({ ctx, res })
+  }
+  /**
+   * @summary ⽤户登出
+   * @description ⽤户登出
+   * @router post /auth/jwt/logout
+   * @request body loginRequest *body
+   * @response 200 baseResponse 创建成功
+   */
+  async logout() {
+    const { ctx, service } = this
+    // 调⽤ Service 进⾏业务处理
+    await service.userAccess.logout()
+    // 设置响应内容和响应状态码
+    ctx.helper.success({ ctx })
+  }
+}
+module.exports = UserAccessController
+```
+
+- 在swagger中点击测试：http://127.0.0.1:7001/swagger-ui.html
+  - 可以看到用户鉴权中有登入登出接口了
+
+- 访问自己写的页面：http://127.0.0.1:7001/public/index.html
+  - 可以点击登入、用户列表，来测试
 
 
 
