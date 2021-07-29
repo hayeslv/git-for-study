@@ -26,6 +26,18 @@ ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 
 
 
+如果你每次重启系统之后，使用ifconfig命令又看不到IP地址了，必须每次都使用 dhclient ens33 命令重新分配的话,可以用下面方法
+
+在路径 /etc/profile.d 下放入 sh脚本
+
+```shell
+sudo dhclient ens33
+```
+
+
+
+
+
 
 
 

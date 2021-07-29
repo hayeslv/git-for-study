@@ -1,4 +1,4 @@
-安装网络命令：
+### 安装网络命令：
 
 ```bash
 sudo apt install net-tools
@@ -30,7 +30,7 @@ sudo service ssh star
 
 
 
-vi命令安装
+### vi命令安装
 
 ```bash
 apt-get install -y vim
@@ -66,6 +66,20 @@ lhz@ubuntu:/tmp/docker$ sudo gpasswd -a ${USER} docker
 lhz@ubuntu:/tmp/docker$ sudo su
 root@ubuntu:/tmp/docker$ su lhz
 lhz@ubuntu:/tmp/docker$ docker-compose up -d
+```
+
+
+
+### 查看文件路径命令
+
+```bash
+apt install mlocate
+```
+
+查看nginx配置文件路径
+
+```bash
+locate nginx.conf
 ```
 
 

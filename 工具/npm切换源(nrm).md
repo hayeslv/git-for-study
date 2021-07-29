@@ -37,7 +37,23 @@ nrm test
 
 
 
+### npm
 
+查看源地址
+
+```bash
+npm config get registry
+```
+
+设置源地址
+
+```bash
+npm config set registry https://registry.npm.taobao.org/
+```
+
+npm官方源地址：https://registry.npmjs.org
+
+淘宝镜像源地址：https://registry.npm.taobao.org/
 
 
 
