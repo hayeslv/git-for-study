@@ -726,21 +726,106 @@ module.exports = function(source) {
 
 
 
+## 三、webpack-03工程
+
+### 1、静态资源
+
+- 图片
+- 第三方字体文件
+
+问题：资源压缩
+
+#### 图片资源的使用场景
+
+- html中的img标签
+- css中使用：背景图等
+- js中的dom操作
+
+#### js中使用图片
+
+添加图片文件：src/assets/images/xiaoxin.jpg
+
+```js
+// src/index.js
+import pic from './assets/images/xiaoxin.jpg'
+
+const img = new Image();
+img.src = pic;
+const tag = document.getElementById('app');
+tag.append(img);
+```
+
+这时候打包，会报错：`npm run build:dev`
+
+```bash
+npm i file-loader -D
+```
+
+```js
+// webpack.config.js 添加rules
+rules: [
+  {
+    test: /\.css$/,
+    use: [MiniCssExtractPlugin.loader, "css-loader"]
+  },
+  {
+    test: /\.less$/,
+    use: [ MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
+  },
+  {
+    test: /\.(jpe?g|png|gif|webp)$/,
+    use: {
+      loader: "file-loader",
+      options: {
+        // 目录管理可以放在name中做：name: "images/[name].[ext]"，不过这样做不好
+        name: "[name].[ext]",// [name]名称，[ext]后缀
+        outputPath: "images"
+      }
+    }
+  }
+]
+```
+
+执行打包操作，即可看到打包成功
 
 
 
+#### 在css中使用图片
 
+```less
+// src/style/index.less
+body{
+  div{
+    display: flex;
+    height: 100px;
+    background: url('../assets/images/xiaoxin.jpg') 0 0 no-repeat;
+  }
+}
+```
 
+```js
+// src/index.js
+import less from './style/index.less';
+```
 
+这时候打包，发现图片并没被渲染出来，是因为路径出了问题：**对资源做了目录管理，导致路径出了问题**
 
+修改file-loader
 
-
-
-
-
-
-
-
+```js
+{
+  test: /\.(jpe?g|png|gif|webp)$/,
+  use: {
+    loader: "file-loader",
+    options: {
+      // 目录管理可以放在name中做：name: "images/[name].[ext]"，不过这样做不好
+      name: "[name].[ext]",// [name]名称，[ext]后缀
+      outputPath: "images", // 资源的存储位置
+      publicPath: "../images", // 资源的使用位置：publicPath + name = css中图片的使用路径
+    }
+  }
+}
+```
 
 
 
