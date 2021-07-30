@@ -40,8 +40,9 @@ app.use(async (ctx, next) => {
     await next()
     // 参数出现在HTML内容或属性浏览器会拦截
     ctx.set('X-XSS-Protection', 0)
-    // ctx.set('Content-Security-Policy', "default-src 'self'") //! CSP测试
-    ctx.set('X-FRAME-OPTIONS', 'DENY') //! 防点击劫持
+    // ctx.set('Content-Security-Policy', "default-src 'self'") //! CSP测试：只允许加载本站资源
+    // ctx.set('Content-Security-Policy', "img-src 'https'") //! CSP测试：只允许加载 HTTPS 协议图片
+    // ctx.set('X-FRAME-OPTIONS', 'DENY') //! 防点击劫持
 
     //! 查看网站调用的源
     // const referer = ctx.request.header.referer
@@ -59,31 +60,31 @@ router.get('/', async (ctx) => {
         from: ctx.query.from, // 从url参数中获取from
         username: ctx.session.username,
         text: res[0].text,
-        //! 演示转码
-        // from: escape(ctx.query.from), // 从url参数中获取from
-        // username: escape(ctx.session.username),
-        // text: escape(res[0].text),
+        //! 演示转码：黑名单
+        // from: escape(ctx.query.from || ''), // 从url参数中获取from
+        // username: escape(ctx.session.username || ''),
+        // text: escape(res[0].text || ''),
 
         // from: html, //! 演示xss库
     });
 });
 
-//! 演示XSS
+//! 演示XSS：白名单（富文本）
 const xss = require('xss');
 let html = xss('<h1 id="title">XSS Demo</h1><script>alert("xss");</script>')
 console.log(html);
 
-//! 演示转码
-// function escape(str) {
-//     str = str.replace(/&/g, '&amp;')
-//     str = str.replace(/</g, '&lt;')
-//     str = str.replace(/>/g, '&gt;')
-//     str = str.replace(/"/g, '&quto;')
-//     str = str.replace(/'/g, '&#39;')
-//     str = str.replace(/`/g, '&#96;')
-//     str = str.replace(/\//g, '&#x2F;')
-//     return str
-// }
+function escape(str) {
+    console.log(str);
+    str = str.replace(/&/g, '&amp;')
+    str = str.replace(/</g, '&lt;')
+    str = str.replace(/>/g, '&gt;')
+    str = str.replace(/"/g, '&quto;')
+    str = str.replace(/'/g, '&#39;')
+    str = str.replace(/`/g, '&#96;')
+    str = str.replace(/\//g, '&#x2F;')
+    return str
+}
 
 
 

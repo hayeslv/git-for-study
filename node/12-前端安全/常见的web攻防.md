@@ -88,7 +88,7 @@ document.cookie="cookie:sess=eyJ1c2VybmFtZSI6Imxhb3dhbmciLCJfZXhwaXJlIjoxNTUzNTY
 Content-Security-Policy: default-src 'self'
 // 只允许加载 HTTPS 协议图片
 Content-Security-Policy: img-src https://*
-// 不允许加载任何来源框架
+// 不允许加载任何来源框架（未成功）
 Content-Security-Policy: child-src 'none'
 ```
 
@@ -127,6 +127,19 @@ function escape(str) {
   str = str.replace(/\//g, '&#x2F;')
   return str
 }
+```
+
+```js
+router.get('/', async (ctx) => {
+    res = await query('select * from test.text')
+    // ctx.set('X-FRAME-OPTIONS', 'DENY')
+    await ctx.render('index', {
+        //! 演示转码：黑名单
+        from: escape(ctx.query.from), // 从url参数中获取from
+        username: escape(ctx.session.username),
+        text: escape(res[0].text),
+    });
+});
 ```
 
 
@@ -375,7 +388,7 @@ distributed denial of service
 > - 带宽扩容 + CDN
 > 提高犯罪成本
 
-1.57
+
 
 
 
