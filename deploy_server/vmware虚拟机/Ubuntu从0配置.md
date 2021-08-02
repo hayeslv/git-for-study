@@ -9,10 +9,6 @@ sudo apt-get install lrzsz  # 文件上传下载工具
 
 
 
-
-
-
-
 ## 二、安装网络配置
 
 ```bash

@@ -20,7 +20,7 @@ const CONFIG = {
     /** (boolean) automatically commit headers (default true) */
     overwrite: false,
     /** (boolean) can overwrite or not (default true) */
-    httpOnly: false, //! cookie只读
+    httpOnly: true, //! cookie只读
     /** (boolean) httpOnly or not (default true) */
     signed: false,
     /** (boolean) signed or not (default true) */

