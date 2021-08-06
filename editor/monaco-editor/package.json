@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "element-plus": "^1.0.2-beta.70",
+    "element-ui": "^2.15.5",
     "monaco-editor": "^0.26.1",
     "monaco-editor-webpack-plugin": "^4.1.1",
     "vue": "^3.0.0",
