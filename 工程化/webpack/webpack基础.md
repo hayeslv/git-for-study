@@ -829,6 +829,55 @@ import less from './style/index.less';
 
 
 
+### 2、url-loader
+
+url-loader（可以将图片转换成base64）是file-loader 的加强版
+
+url-loader是依赖于file-loader的
+
+```bash
+npm i url-loader file-loader -D
+```
+
+> url-loader和file-loader在webpack4还会使用，在webpack5就不会再使用了，因为有更好的解决方案
+
+
+
+### 3、资源压缩、优化
+
+```bash
+# 这里一定要用cnpm
+cnpm i image-webpack-loader -D
+```
+
+第三节：1.03
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

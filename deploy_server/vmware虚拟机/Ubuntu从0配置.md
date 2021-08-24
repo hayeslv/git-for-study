@@ -174,6 +174,33 @@ docker-compose up -d
 
 
 
+## 五、安装mongodb
+
+/docker/mongo文件夹下
+
+vi docker-compose.yml
+
+```bash
+#将下面代码弄进去
+version: '3.1'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/:/data/db
+      - ./copydata:/dump/
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 27018:8081
+```
+
+然后执行：docker-compose up -d
+
 
 
 
