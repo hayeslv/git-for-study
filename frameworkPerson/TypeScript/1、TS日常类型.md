@@ -162,6 +162,7 @@ const o : {
     }
 } = {a : "1"}
 
+// o.b?.c 右值（表达式右边的值），可以作为赋值的一方，不能被赋值
 console.log(o.b?.c) // undefined
 
 o.b?.c = "Hello" // Error
@@ -197,7 +198,7 @@ function printId(id: number | string) {
 
 ![image-20210712083612040](F:\study\git-for-study\frameworkPerson\00-teach\skedo-courses\docs\ts-course-doc\assets\image-20210712083612040.png)
 
-Typescript会针对联合类型做排除法：
+Typescript会针对联合类型做排除法：（窄化）
 
 ```tsx
 function printID(id : number | string) {
@@ -248,7 +249,7 @@ let x : ID = 100
 ```jsx
 let id : ID = "abc"
 id = 456 // OK
-
+// 这里已经赋值为string了，为什么还能赋值number呢。因为没有做窄化
 ```
 
 ## 接口

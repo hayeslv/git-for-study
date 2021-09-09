@@ -1,3 +1,8 @@
+/*
+ * @Author: Lvhz
+ * @Date: 2021-07-17 17:06:02
+ * @Description: Description
+ */
 // 一个描述了x和y的对象，内容里x和y必须要有
 const pt: {
   x: number,
@@ -28,5 +33,5 @@ const o : {
 } = {a : "1"}
 
 // console.log(o.b.c) // 报错
-console.log(o.b?.c)
+console.log(o.b?.c) // undefined （右值）
 o.b?.c = "Hello" // Error
