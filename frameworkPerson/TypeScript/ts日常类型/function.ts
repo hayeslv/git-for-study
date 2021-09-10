@@ -1,5 +1,10 @@
-function foo(x: number) {
-
+/*
+ * @Author: Lvhz
+ * @Date: 2021-07-17 17:03:25
+ * @Description: Description
+ */
+function foo1(x) {
+  console.log(x);
 }
 foo(); // 没传参，报错
 
