@@ -3,7 +3,7 @@
  * @Date: 2021-09-14 14:31:11
  * @Description: Description
  */
-const Direction = require('./Direction.js')
+const { turnLeft, turnRight } = require('./DirectionMap.js')
 module.exports = class MarsRover {
   constructor(position, direction) {
     this.position = position
@@ -19,21 +19,9 @@ module.exports = class MarsRover {
     }
   }
   turnLeft() {
-    if(this.direction === Direction.N) {
-      this.direction = Direction.W
-      return 
-    } 
-    if(this.direction === Direction.W) {
-      this.direction = Direction.S
-      return 
-    }
-    if(this.direction === Direction.S) {
-      this.direction = Direction.E
-      return 
-    }
-    if(this.direction === Direction.E) {
-      this.direction = Direction.W
-      return 
-    }
+    this.direction = turnLeft(this.direction)
+  }
+  turnRight() {
+    this.direction = turnRight(this.direction)
   }
 }

@@ -69,7 +69,62 @@ describe('marsRover', () => {
           x: 0,
           y: 0
         },
+        direction: Direction.N
+      })
+    })
+  })
+
+  describe('turnRight', () => {
+    it('N -> E', () => {
+      const marsRover = new MarsRover(new Position(0, 0), Direction.N)
+
+      marsRover.turnRight()
+  
+      expect(marsRover.getState()).toEqual({
+        position: {
+          x: 0,
+          y: 0
+        },
+        direction: Direction.E
+      })
+    })
+    it('E -> S', () => {
+      const marsRover = new MarsRover(new Position(0, 0), Direction.E)
+
+      marsRover.turnRight()
+  
+      expect(marsRover.getState()).toEqual({
+        position: {
+          x: 0,
+          y: 0
+        },
+        direction: Direction.S
+      })
+    })
+    it('S -> W', () => {
+      const marsRover = new MarsRover(new Position(0, 0), Direction.S)
+
+      marsRover.turnRight()
+  
+      expect(marsRover.getState()).toEqual({
+        position: {
+          x: 0,
+          y: 0
+        },
         direction: Direction.W
+      })
+    })
+    it('W -> N', () => {
+      const marsRover = new MarsRover(new Position(0, 0), Direction.W)
+
+      marsRover.turnRight()
+  
+      expect(marsRover.getState()).toEqual({
+        position: {
+          x: 0,
+          y: 0
+        },
+        direction: Direction.N
       })
     })
   })
