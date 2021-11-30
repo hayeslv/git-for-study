@@ -259,6 +259,8 @@ scheduleCronstyle()
 
 ### 6、使用pm2启动js服务
 
+注意：需要在src目录下启动（有路径问题）
+
 ```bash
 pm2 start mongo_data_backup.js --name mongoDataBackup
 ```
@@ -304,30 +306,6 @@ docker inspect -f '{{.Id}}' mongo_mongo_1    # 得到 f54dfcdb4cbf4f3148b263f6f5
 docker cp /home/lhz/docker/mongo/dump/oversee-store f54dfcdb4cbf4f3148b263f6f5005502752fd6cfa5a706e388d9198ac1c6f8ca:/dump
 docker exec -it mongo_mongo_1 bash -c 'mongorestore -h 127.0.0.1  -d oversee-store /dump/oversee-store'
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

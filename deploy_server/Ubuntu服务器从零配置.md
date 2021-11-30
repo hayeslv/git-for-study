@@ -103,6 +103,15 @@ sudo systemctl enable docker
 sudo systemctl start docker
 ```
 
+建立 docker 用户组（附加、可以不用）
+
+```bash
+# root权限比较高
+# 如果是个人服务器，只需要用root的话，这一步可以跳过
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
 镜像加速（可选）
 
 ```bash
@@ -124,7 +133,9 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-docker-compose安装
+
+
+## 四、安装docker-compose
 
 ```bash
 apt install docker-compose
@@ -132,7 +143,7 @@ apt install docker-compose
 
 
 
-## 四、安装docker-mysql
+### 1、安装docker-mysql
 
 在目录下：/home/lhz/docker/mysql
 
@@ -174,7 +185,7 @@ docker-compose up -d
 
 
 
-## 五、安装docker-mongodb
+### 2、安装docker-mongodb
 
 /docker/mongo文件夹下
 
@@ -200,6 +211,44 @@ services:
 ```
 
 然后执行：docker-compose up -d
+
+
+
+## 五、安装node环境
+
+```bash
+# 在 /root 下新建nodejs文件夹（这里可以按照自己配置的路径）
+mkdir nodejs
+
+# 官网下载
+wget https://nodejs.org/dist/v12.10.0/node-v12.10.0-linux-x64.tar.xz
+
+# 如果官网下载报错：wget:unable to resolv host address
+# 可以尝试进行下列操作
+vi /etc/resolv.conf
+# 添加下列代码
+nameserver 8.8.8.8 #google https://nodejs.org
+
+
+# 解压
+tar xf node-v12.10.0-linux-x64.tar.xz
+
+# 输入以下命令（注意，/root/nodejs  换成你自己官网下载node的解压路径，我这里是在 /root/nodejs 解压的）
+ln -s /root/nodejs/node-v12.10.0-linux-x64/bin/node /usr/local/bin/node
+ln -s /root/nodejs/node-v12.10.0-linux-x64/bin/npm /usr/local/bin/npm
+
+
+# 测试
+node -v
+输出： v12.10.0
+npm -v
+输出： 6.10.3
+代表nodejs安装成功
+```
+
+
+
+
 
 
 
